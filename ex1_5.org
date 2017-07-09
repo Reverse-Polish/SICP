@@ -1,0 +1,60 @@
+* Exercise 1.5
+Exercise 1.5.  Ben Bitdiddle has invented a test to determine whether the interpreter he is faced with is using applicative-order evaluation or normal-order evaluation. He defines the following two procedures:
+
+#+BEGIN_SRC scheme 
+(define (p) (p))
+
+(define (test x y)
+  (if (= x 0)
+      0
+      y))
+#+END_SRC
+
+Then he evaluates the expression
+
+#+BEGIN_SRC scheme
+(test 0 (p))
+#+END_SRC
+
+
+What behavior will Ben observe with an interpreter that uses applicative-order  evaluation? What behavior will he observe with an interpreter that uses normal-order evaluation? Explain your answer. (Assume that the evaluation rule for the special form if is the same whether the interpreter is using normal or applicative order: The predicate expression is evaluated first, and the result determines whether to evaluate the consequent or the alternative expression.)
+
+* Analysis
+The fundamental difference between applicative and normal order evaluation seems to be the extent to which sustitution [expansion] of formal parameters are performed before evaluation takes place. With normal order evaluation, the substitutions are performed before any evaluation takes place (full substitution before evaluation). With applicative order evaluation on the orher hand, evaluated paraeters are evaluated, that is the values of compound sub expressions as opposed to the sub expressions themselves.
+
+#+NAME: applicatve order
+#+BEGIN_EXAMPLE
+  (test x y) ; x = 0 and y = the procedure (p), defined above
+  (test 0 (p)) ; eavaluation of parameters, where x  -> evaluates to 0 and (p) -> is defined in terms of itself and the evaluation goes on forever
+#+END_EXAMPLE
+
+#+NAME: normal order
+#+BEGIN_EXAMPLE
+  (test x y)
+
+  (if (= 0 x) ; substitution of the body of test
+      y   
+      x)
+
+  (if (= 0 0) ;substitution of the formal parameters, not evaluation
+      0
+      (p))
+
+  ;; evaluation:
+
+  (if (= 0 0)
+      0
+  ;;  ... and thats it.
+
+#+END_EXAMPLE
+
+* Conclusions
+
+Under applicative order evaluation, the result will be an endless recursion, signalling an error.
+
+Under normal order ealuation, the result will be zero as per the consequent.
+
+
+
+
+
