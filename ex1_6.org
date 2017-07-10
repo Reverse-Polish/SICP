@@ -1,0 +1,80 @@
+* Exercise 1.6.
+#+BEGIN_QUOTE
+Alyssa P. Hacker doesn't see why if needs to be provided as a special form. ``Why can't I just define it as an ordinary procedure in terms of cond?'' she asks. Alyssa's friend Eva Lu Ator claims this can indeed be done, and she defines a new version of if:
+#+END_QUOTE
+
+#+BEGIN_SRC scheme 
+(define (new-if predicate then-clause else-clause)
+  (cond (predicate then-clause)
+        (else else-clause)))
+#+END_SRC
+
+#+BEGIN_QUOTE
+Eva demonstrates the program for Alyssa:
+#+END_QUOTE
+
+#+BEGIN_EXAMPLE
+(new-if (= 2 3) 0 5)
+5
+
+(new-if (= 1 1) 0 5)
+0
+#+END_EXAMPLE
+
+#+BEGIN_QUOTE
+Delighted, Alyssa uses new-if to rewrite the square-root program:
+#+END_QUOTE
+
+#+BEGIN_SRC scheme 
+(define (sqrt-iter guess x)
+  (new-if (good-enough? guess x)
+          guess
+          (sqrt-iter (improve guess x)
+                     x)))
+#+END_SRC
+
+#+BEGIN_QUOTE
+What happens when Alyssa attempts to use this to compute square roots? Explain.
+#+END_QUOTE
+
+* Analysis
+Special forms do not follow the normal (general) evaluation rule. /If/ is a special form. If the predicate is true, the alternative to the consequent is not evaluated.
+
+/cond/ is a normal form (following the general ealuation rule), in the sense that all predicates are evaluated even if only the consequent corresponding to a true predicate is returned.
+
+Evidence:
+#+BEGIN_SRC scheme
+  (cond ((= 2 2) 7)
+        (else (8))
+  ;Error
+
+  (if (= 2 2)
+       7
+       (8))
+  ;Value: 7
+#+END_SRC
+
+
+#+BEGIN_SRC scheme
+  ;; The original procedure
+  (define (sqrt-iter guess x)
+    (if (good-enough? guess x)
+        guess
+        (sqrt-iter (improve guess x)
+                   x)))
+  ;; The modified procedure
+  (define (sqrt-iter guess x)
+    (new-if (good-enough? guess x)
+            guess
+            (sqrt-iter (improve guess x)
+                       x)))
+  ;; The modificator
+  (define (new-if predicate then-clause else-clause)
+    (cond (predicate then-clause) ; this will evaluate
+          (else else-clause)))    ; and this
+#+END_SRC
+
+
+
+* Conclusion
+As explained above, /cond/ evaluates all caluses. The implication for the sqrt procedure in this respect is that ... 
