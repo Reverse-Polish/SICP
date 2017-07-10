@@ -38,7 +38,7 @@ What happens when Alyssa attempts to use this to compute square roots? Explain.
 #+END_QUOTE
 
 * Analysis
-Special forms do not follow the normal (general) evaluation rule. /If/ is a special form. If the predicate is true, the alternative to the consequent is not evaluated.
+Special forms do not follow the normal (general) evaluation rule. /if/ is a special form. If the predicate is true, the alternative to the consequent is not evaluated.
 
 /cond/ is a normal form (following the general ealuation rule), in the sense that all predicates are evaluated even if only the consequent corresponding to a true predicate is returned.
 
