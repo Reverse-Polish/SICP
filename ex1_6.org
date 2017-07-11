@@ -55,45 +55,30 @@ Evidence:
   ;Value: 7
 #+END_SRC
 
-
+The orignial, the modified and the modifier:
 #+BEGIN_SRC scheme
   ;; The original procedure
   (define (sqrt-iter guess x)
-    (if (good-enough? guess x)          ; if preditcate function 
+    (if (good-enough? guess x)          ; if preditcate function is tru, return 
         guess                           ; guess
         (sqrt-iter (improve guess x)    ; else ... 
                    x)))
   ;; The modified procedure
   (define (sqrt-iter guess x)
-    (new-if (good-enough? guess x)
+    (new-if (good-enough? guess x)      ; looks similar on the surface, howewer...
             guess
             (sqrt-iter (improve guess x)
                        x)))
-  ;; The modificator
+  ;; The modifier
   (define (new-if predicate then-clause else-clause)
-    (cond (predicate then-clause) ; this will evaluate
-          (else else-clause)))    ; and this
+    (cond (predicate then-clause)       ; this will be evaluated
+          (else else-clause)))          ; and so will this
 #+END_SRC
-
-The /good-enough?/ procedure will return true if the square of /guess/ deviates from x by less than 0.001. In the case of /if/ this will result in /guess/ being returned to the recurring /sqrt-iter/, otherwise one additional recursion. In the case of /new-if/ a #t from the /good-enough?/ procedure will return /guess/ to the recurring sqrt-iter, but it will also evaluate the else-clause, resulting in an endless recursion, since...
-
-
-
-Guessing:
-The else case in the cond procedure will evaluate something at some point wich will return an error.
-
-The two: then-clause and else-clause:
-the then-clause is a procedure while the else clause is the number which square root is beinc calculated.
-
-(define (good-enough? guess x)
-  (< (abs (- (square guess) x)) 0.001))
-
-
-
-good-enough? is the first case in the cond. It takes guess and x as formal parameters. 
-
-
 
 
 * Conclusion
-As explained above, /cond/ evaluates all caluses. The implication for the sqrt procedure in this respect is that ... 
+As explained above, /cond/ is a normal form following the normal evaluation rule with implications for the /sqrt-iter/ procedure arising on the last recursion.
+
+The /good-enough?/ procedure will return true if the square of /guess/ deviates from x by less than 0.001. In the case of /if/ this will result in /guess/ being returned to the recurring /sqrt-iter/, otherwise the /sqrt-iter/ procedure will be evaluatet with the /improve/ procedure as a formal parameter, resulting in one additional recursion. This will continue until the /good-enoug?/ procedure returns #f, resulting  the imroved guess form the previous recursion as the final result.
+
+In the case of /new-if/ the resulting #f from the /good-enough?/ procedure will not stop the recursive process, resulting in an error similar to the (define (f)(f)) as considdered in a previous execise.
