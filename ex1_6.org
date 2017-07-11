@@ -38,13 +38,14 @@ What happens when Alyssa attempts to use this to compute square roots? Explain.
 #+END_QUOTE
 
 * Analysis
-Special forms do not follow the normal (general) evaluation rule. /if/ is a special form. If the predicate is true, the alternative to the consequent is not evaluated.
+Special forms do not follow the normal (general) evaluation rule. /if/ is a special form. If the predicate is true, the alternative to the consequent is _not_ evaluated.
 
-/cond/ is a normal form (following the general ealuation rule), in the sense that all predicates are evaluated even if only the consequent corresponding to a true predicate is returned.
+/cond/ is a normal form (following the general evaluation rule), in the sense that _all_ predicates are evaluated even if only the consequent corresponding to the first true predicate is returned.
 
 Evidence:
 #+BEGIN_SRC scheme
-  (cond ((= 2 2) 7)
+  (cond ((= 2 2)
+         7)
         (else (8))
   ;Error
 
@@ -58,9 +59,9 @@ Evidence:
 #+BEGIN_SRC scheme
   ;; The original procedure
   (define (sqrt-iter guess x)
-    (if (good-enough? guess x)
-        guess
-        (sqrt-iter (improve guess x)
+    (if (good-enough? guess x)          ; if preditcate function 
+        guess                           ; guess
+        (sqrt-iter (improve guess x)    ; else ... 
                    x)))
   ;; The modified procedure
   (define (sqrt-iter guess x)
@@ -73,6 +74,24 @@ Evidence:
     (cond (predicate then-clause) ; this will evaluate
           (else else-clause)))    ; and this
 #+END_SRC
+
+The /good-enough?/ procedure will return true if the square of /guess/ deviates from x by less than 0.001. In the case of /if/ this will result in /guess/ being returned to the recurring /sqrt-iter/, otherwise one additional recursion. In the case of /new-if/ a #t from the /good-enough?/ procedure will return /guess/ to the recurring sqrt-iter, but it will also evaluate the else-clause, resulting in an endless recursion, since...
+
+
+
+Guessing:
+The else case in the cond procedure will evaluate something at some point wich will return an error.
+
+The two: then-clause and else-clause:
+the then-clause is a procedure while the else clause is the number which square root is beinc calculated.
+
+(define (good-enough? guess x)
+  (< (abs (- (square guess) x)) 0.001))
+
+
+
+good-enough? is the first case in the cond. It takes guess and x as formal parameters. 
+
 
 
 
